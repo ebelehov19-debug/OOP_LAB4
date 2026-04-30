@@ -1,0 +1,14 @@
+namespace: todo-prod
+replicas: 3
+storage:
+  size: 10Gi
+database:
+  username: produser
+  password: ""
+  name: todoapp
+image:
+  repository: postgres
+  tag: "15"
+redis:
+  repository: redis
+  tag: "7"
