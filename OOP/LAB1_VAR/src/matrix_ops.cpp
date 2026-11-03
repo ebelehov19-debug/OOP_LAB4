@@ -8,7 +8,7 @@ int** matrix_create(std::size_t rows, std::size_t cols)
     int** m = new int*[rows];
     for (std::size_t i = 0; i < rows; i++)
     {
-        m[i] = new int[cols](); // 0 инициализация 
+        m[i] = new int[cols]{}; // 0 инициализация 
     }
 
     return m;

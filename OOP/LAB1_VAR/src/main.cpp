@@ -1,6 +1,7 @@
+#include "matrix_ops.h"
 #include <iostream>
 #include <limits>
-#include "matrix_ops.h"
+
 
 int main() 
 {
@@ -23,7 +24,7 @@ int main()
          {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Input error! Please enter a number.\n";
+            std::cout << "Input error! Please enter a number\n";
             continue;
         }
         
@@ -42,10 +43,10 @@ int main()
                     break;
                 }
                 matrix_delete(matrix, rows);
-                size_t rows(r);
-                size_t cols(c);
+                rows = static_cast<std::size_t>(r);   
+                cols = static_cast<std::size_t>(c);
                 matrix = matrix_create(rows, cols);
-                std::cout << "Matrix " << rows << "x" << cols << " created.\n";
+                std::cout << "Matrix " << rows << "x" << cols << " created\n";
                 break;
             }
             case 2: 
@@ -66,7 +67,7 @@ int main()
             {
                 if (!matrix) 
                 {
-                    std::cout << "Matrix is empty.\n";
+                    std::cout << "Matrix is empty\n";
                     break;
                 }
                 std::cout << "Current matrix:\n";
@@ -95,7 +96,7 @@ int main()
                 return 0;
             }
             default:
-                std::cout << "Invalid option!\n";
+                std::cout << "Invalid option\n";
         }
     }
     return 0;
