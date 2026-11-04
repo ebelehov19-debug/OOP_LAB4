@@ -39,7 +39,9 @@ double Credit::metric() const
 bool Credit::isAnnuity() const
 {
     return annuity_;
-}void Credit::read(std::istream& in)
+}
+
+void Credit::read(std::istream& in)
 {
     double sum;
     double rate;
