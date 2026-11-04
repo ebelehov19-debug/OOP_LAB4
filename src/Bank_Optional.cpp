@@ -4,24 +4,24 @@
 #include <istream>
 #include <ostream>
 
-Bank_Optional::operator double()
+Bank_Optional::operator double() const
 {
     return metric();
 }
 
-bool Bank_Optinal :: operator == (condt Bank_Optional& other)
+bool Bank_Optional::operator==(const Bank_Optional& other) const
 {
     constexpr double eps = 1e-6;
     return std::abs(metric() - other.metric()) < eps;
 }
 
-std::ofstream& operator<<(std::ofstream& out,const Bank_Optional& object)
+std::ostream& operator<<(std::ostream& out, const Bank_Optional& object)
 {
     object.print(out);
     return out;
 }
 
-std::ifstream& operator>>(std::ifstream& in, const Banr_Optional& object)
+std::istream& operator>>(std::istream& in, Bank_Optional& object)
 {
     object.read(in);
     return in;
