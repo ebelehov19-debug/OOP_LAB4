@@ -5,6 +5,11 @@
 #include <ostream>
 #include <stdexcept>
 
+Bank_Optional* Deposit::clone() const
+{
+    return new Deposit(*this);
+}
+
 Deposit::Deposit()
     : sum_(0.0), rate_(0.0), years_(1), cumulative_(false)
 {}

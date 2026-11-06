@@ -13,6 +13,7 @@ public:
     Deposit();
     Deposit(double sum, double rate, int years, bool cumulative);
     double metric() const override;
+    Bank_Optional* clone() const override;
 
     void read(std::istream& in) override;
     void print(std::ostream& out) const override;

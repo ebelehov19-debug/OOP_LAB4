@@ -5,6 +5,11 @@
 #include <ostream>
 #include <stdexcept>
 
+Bank_Optional* Credit::clone() const
+{
+    return new Credit(*this);
+}
+
 Credit::Credit():sum_(0.0),rate_(0.0),years_(1),annuity_(false)
 {}
 

@@ -5,6 +5,11 @@
 #include <ostream>
 #include <stdexcept>
 
+Bank_Optional* Card::clone() const
+{
+    return new Card(*this);
+}
+
 Card::Card():spending_(0.0),rate_(0.0){}
 
 Card:: Card(double spending,double rate):

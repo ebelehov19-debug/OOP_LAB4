@@ -9,6 +9,7 @@ class Bank_Optional
         virtual void read(std::istream& in) = 0  ;
         virtual void print(std::ostream& out) const = 0;
         virtual ~Bank_Optional() = default;
+        virtual Bank_Optional* clone() const = 0;
 
         explicit operator double() const ;
         bool operator ==(const Bank_Optional& other) const;    
