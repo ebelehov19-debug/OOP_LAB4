@@ -17,7 +17,7 @@ public:
     BankCollection& operator=(const BankCollection& other);
     BankCollection(BankCollection&& other) noexcept;
     BankCollection& operator=(BankCollection&& other) noexcept;
-
+    void swap(BankCollection& other) noexcept;
     void add(Bank_Optional* object);
     void remove(std::size_t index);
 
