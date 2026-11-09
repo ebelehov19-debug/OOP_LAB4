@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(bank STATIC
     src/Bank_Optional.cpp
+    src/BankCollection.cpp
     src/Deposit.cpp
     src/Credit.cpp
     src/Card.cpp
@@ -47,7 +48,7 @@ if(BUILD_TESTING)
         )
         FetchContent_MakeAvailable(googletest)
     endif()
-    add_executable(bank_tests tests/test_bank.cpp)
+    add_executable(bank_tests tests/test_bank.cpp tests/test_collection.cpp)
     target_link_libraries(bank_tests PRIVATE bank GTest::gtest_main)
     enable_warnings(bank_tests)
     include(GoogleTest)

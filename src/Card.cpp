@@ -38,11 +38,13 @@ void Card::read(std::istream& in)
 
     in >> std::ws;
     if (in.peek() == 'C') {
-        const auto expect = [&in](const char* text) {
+        const auto expect = [&in](const char* text) 
+        {
             in >> std::ws;
             for (; *text; ++text) {
                 char actual;
-                if (!in.get(actual) || actual != *text) {
+                if (!in.get(actual) || actual != *text) 
+                {
                     in.setstate(std::ios::failbit);
                     return false;
                 }
@@ -57,15 +59,19 @@ void Card::read(std::istream& in)
             return;
         }
     }
-    else if (!(in >> spending >> rate)) {
-        return;
-    }
+    else 
+        if (!(in >> spending >> rate)) 
+         {
+            return;
+        }
 
-    try {
+    try
+     {
         Card temp(spending, rate);
         *this = temp;
     }
-    catch (const std::invalid_argument&) {
+    catch (const std::invalid_argument&) 
+    {
         in.setstate(std::ios::failbit);
     }
 }

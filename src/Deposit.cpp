@@ -18,14 +18,16 @@ Deposit::Deposit(double sum, double rate, int years, bool cumulative)
     : sum_(sum), rate_(rate), years_(years), cumulative_(cumulative)
 {
     if (!std::isfinite(sum) || !std::isfinite(rate) ||
-        sum < 0 || rate < 0 || years <= 0) {
+        sum < 0 || rate < 0 || years <= 0) 
+        {
         throw std::invalid_argument("Invalid deposit parameters");
-    }
+        }
 }
 
 double Deposit::metric() const
 {
-    if (cumulative_) {
+    if (cumulative_) 
+    {
         return sum_ * (std::pow(1.0 + rate_, years_) - 1.0) / years_;
     }
 
@@ -43,8 +45,6 @@ void Deposit::read(std::istream& in)
     double rate;
     int years;
     int cumulative;
-
-    // Accept both plain field values and the labelled output of print().
     in >> std::ws;
     if (in.peek() == 'D')
     {
@@ -65,11 +65,13 @@ void Deposit::read(std::istream& in)
             !expect("rate=") || !(in >> rate) ||
             !expect("years=") || !(in >> years) ||
             !expect("cumulative=") || !(in >> cumulative) ||
-            !expect("metric=") || !(in >> printedMetric)) {
+            !expect("metric=") || !(in >> printedMetric)) 
+            {
             return;
-        }
+            }
     }
-    else if (!(in >> sum >> rate >> years >> cumulative))
+    else 
+    if (!(in >> sum >> rate >> years >> cumulative))
     {
         return;
     }

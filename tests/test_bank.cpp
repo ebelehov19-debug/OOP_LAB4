@@ -11,67 +11,46 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 
-namespace {
 constexpr double eps = 1e-6;
 
-template <class T> T sample();
-template <> Deposit sample<Deposit>() { return Deposit(10000, 0.1, 2, true); }
-template <> Credit sample<Credit>() { return Credit(12000, 0, 2, true); }
-template <> Card sample<Card>() { return Card(10000, 0.05); }
-
-template <class T> const char* input();
-template <> const char* input<Deposit>() { return "10000 0.1 2 1"; }
-template <> const char* input<Credit>() { return "12000 0 2 1"; }
-template <> const char* input<Card>() { return "10000 0.05"; }
-
-template <class T> const char* name();
-template <> const char* name<Deposit>() { return "Deposit:"; }
-template <> const char* name<Credit>() { return "Credit:"; }
-template <> const char* name<Card>() { return "Card:"; }
-
-template <class T> class ProductTest : public testing::Test {};
-using Products = testing::Types<Deposit, Credit, Card>;
-TYPED_TEST_SUITE(ProductTest, Products);
-
-TYPED_TEST(ProductTest, DefaultHasZeroMetric) {
-    const TypeParam product;
+TEST(DepositTest, DefaultHasZeroMetric) {
+    const Deposit product;
     EXPECT_DOUBLE_EQ(product.metric(), 0);
 }
 
-TYPED_TEST(ProductTest, ReadsPlainFieldsThroughBaseReference) {
-    TypeParam product;
+TEST(DepositTest, ReadsPlainFieldsThroughBaseReference) {
+    Deposit product;
     Bank_Optional& base = product;
-    std::istringstream stream(input<TypeParam>());
+    std::istringstream stream("10000 0.1 2 1");
     stream >> base;
     ASSERT_FALSE(stream.fail());
-    EXPECT_NEAR(product.metric(), sample<TypeParam>().metric(), eps);
+    EXPECT_NEAR(product.metric(), Deposit(10000, 0.1, 2, true).metric(), eps);
 }
 
-TYPED_TEST(ProductTest, OutputIncludesTypeAndMetric) {
-    const auto product = sample<TypeParam>();
+TEST(DepositTest, OutputIncludesTypeAndMetric) {
+    const auto product = Deposit(10000, 0.1, 2, true);
     const Bank_Optional& base = product;
     std::ostringstream stream;
     stream << base;
-    EXPECT_NE(stream.str().find(name<TypeParam>()), std::string::npos);
+    EXPECT_NE(stream.str().find("Deposit:"), std::string::npos);
     EXPECT_NE(stream.str().find("rate="), std::string::npos);
     EXPECT_NE(stream.str().find("metric="), std::string::npos);
 }
 
-TYPED_TEST(ProductTest, PrintedObjectCanBeReadBack) {
-    const auto original = sample<TypeParam>();
+TEST(DepositTest, PrintedObjectCanBeReadBack) {
+    const auto original = Deposit(10000, 0.1, 2, true);
     std::stringstream stream;
     stream << std::setprecision(std::numeric_limits<double>::max_digits10) << original;
-    TypeParam restored;
+    Deposit restored;
     stream >> restored;
     ASSERT_FALSE(stream.fail());
     EXPECT_NEAR(restored.metric(), original.metric(), eps);
     EXPECT_EQ(restored, original);
 }
 
-TYPED_TEST(ProductTest, InvalidInputPreservesObject) {
-    auto product = sample<TypeParam>();
+TEST(DepositTest, InvalidInputPreservesObject) {
+    auto product = Deposit(10000, 0.1, 2, true);
     const double previous = product.metric();
     for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
         std::istringstream stream(text);
@@ -81,21 +60,135 @@ TYPED_TEST(ProductTest, InvalidInputPreservesObject) {
     }
 }
 
-TYPED_TEST(ProductTest, DoubleConversionUsesVirtualMetric) {
-    const auto product = sample<TypeParam>();
+TEST(DepositTest, DoubleConversionUsesVirtualMetric) {
+    const auto product = Deposit(10000, 0.1, 2, true);
     const Bank_Optional& base = product;
     EXPECT_DOUBLE_EQ(static_cast<double>(base), product.metric());
 }
 
-TYPED_TEST(ProductTest, DynamicCastRecognizesType) {
-    auto product = sample<TypeParam>();
+TEST(DepositTest, DynamicCastRecognizesType) {
+    auto product = Deposit(10000, 0.1, 2, true);
     Bank_Optional* base = &product;
-    EXPECT_EQ(dynamic_cast<TypeParam*>(base), &product);
-    if constexpr (std::is_same_v<TypeParam, Card>) {
-        EXPECT_EQ(dynamic_cast<Deposit*>(base), nullptr);
-    } else {
-        EXPECT_EQ(dynamic_cast<Card*>(base), nullptr);
+    EXPECT_EQ(dynamic_cast<Deposit*>(base), &product);
+    EXPECT_EQ(dynamic_cast<Card*>(base), nullptr);
+}
+
+TEST(CreditTest, DefaultHasZeroMetric) {
+    const Credit product;
+    EXPECT_DOUBLE_EQ(product.metric(), 0);
+}
+
+TEST(CreditTest, ReadsPlainFieldsThroughBaseReference) {
+    Credit product;
+    Bank_Optional& base = product;
+    std::istringstream stream("12000 0 2 1");
+    stream >> base;
+    ASSERT_FALSE(stream.fail());
+    EXPECT_NEAR(product.metric(), Credit(12000, 0, 2, true).metric(), eps);
+}
+
+TEST(CreditTest, OutputIncludesTypeAndMetric) {
+    const auto product = Credit(12000, 0, 2, true);
+    const Bank_Optional& base = product;
+    std::ostringstream stream;
+    stream << base;
+    EXPECT_NE(stream.str().find("Credit:"), std::string::npos);
+    EXPECT_NE(stream.str().find("rate="), std::string::npos);
+    EXPECT_NE(stream.str().find("metric="), std::string::npos);
+}
+
+TEST(CreditTest, PrintedObjectCanBeReadBack) {
+    const auto original = Credit(12000, 0, 2, true);
+    std::stringstream stream;
+    stream << std::setprecision(std::numeric_limits<double>::max_digits10) << original;
+    Credit restored;
+    stream >> restored;
+    ASSERT_FALSE(stream.fail());
+    EXPECT_NEAR(restored.metric(), original.metric(), eps);
+    EXPECT_EQ(restored, original);
+}
+
+TEST(CreditTest, InvalidInputPreservesObject) {
+    auto product = Credit(12000, 0, 2, true);
+    const double previous = product.metric();
+    for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
+        std::istringstream stream(text);
+        stream >> product;
+        EXPECT_TRUE(stream.fail()) << text;
+        EXPECT_DOUBLE_EQ(product.metric(), previous);
     }
+}
+
+TEST(CreditTest, DoubleConversionUsesVirtualMetric) {
+    const auto product = Credit(12000, 0, 2, true);
+    const Bank_Optional& base = product;
+    EXPECT_DOUBLE_EQ(static_cast<double>(base), product.metric());
+}
+
+TEST(CreditTest, DynamicCastRecognizesType) {
+    auto product = Credit(12000, 0, 2, true);
+    Bank_Optional* base = &product;
+    EXPECT_EQ(dynamic_cast<Credit*>(base), &product);
+    EXPECT_EQ(dynamic_cast<Card*>(base), nullptr);
+}
+
+TEST(CardTest, DefaultHasZeroMetric) {
+    const Card product;
+    EXPECT_DOUBLE_EQ(product.metric(), 0);
+}
+
+TEST(CardTest, ReadsPlainFieldsThroughBaseReference) {
+    Card product;
+    Bank_Optional& base = product;
+    std::istringstream stream("10000 0.05");
+    stream >> base;
+    ASSERT_FALSE(stream.fail());
+    EXPECT_NEAR(product.metric(), Card(10000, 0.05).metric(), eps);
+}
+
+TEST(CardTest, OutputIncludesTypeAndMetric) {
+    const auto product = Card(10000, 0.05);
+    const Bank_Optional& base = product;
+    std::ostringstream stream;
+    stream << base;
+    EXPECT_NE(stream.str().find("Card:"), std::string::npos);
+    EXPECT_NE(stream.str().find("rate="), std::string::npos);
+    EXPECT_NE(stream.str().find("metric="), std::string::npos);
+}
+
+TEST(CardTest, PrintedObjectCanBeReadBack) {
+    const auto original = Card(10000, 0.05);
+    std::stringstream stream;
+    stream << std::setprecision(std::numeric_limits<double>::max_digits10) << original;
+    Card restored;
+    stream >> restored;
+    ASSERT_FALSE(stream.fail());
+    EXPECT_NEAR(restored.metric(), original.metric(), eps);
+    EXPECT_EQ(restored, original);
+}
+
+TEST(CardTest, InvalidInputPreservesObject) {
+    auto product = Card(10000, 0.05);
+    const double previous = product.metric();
+    for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
+        std::istringstream stream(text);
+        stream >> product;
+        EXPECT_TRUE(stream.fail()) << text;
+        EXPECT_DOUBLE_EQ(product.metric(), previous);
+    }
+}
+
+TEST(CardTest, DoubleConversionUsesVirtualMetric) {
+    const auto product = Card(10000, 0.05);
+    const Bank_Optional& base = product;
+    EXPECT_DOUBLE_EQ(static_cast<double>(base), product.metric());
+}
+
+TEST(CardTest, DynamicCastRecognizesType) {
+    auto product = Card(10000, 0.05);
+    Bank_Optional* base = &product;
+    EXPECT_EQ(dynamic_cast<Card*>(base), &product);
+    EXPECT_EQ(dynamic_cast<Deposit*>(base), nullptr);
 }
 
 TEST(DepositTest, ComputesSimpleAndCompoundAnnualEffect) {
@@ -188,4 +281,3 @@ TEST(ProductsTest, DeletingViaBaseCallsDerivedDestructor) {
     }
     EXPECT_TRUE(destroyed);
 }
-} // namespace

@@ -25,11 +25,13 @@ Credit::Credit(double sum, double rate, int years, bool annuity)
 
 double Credit::metric() const
 {
-    if (!annuity_) {
+    if (!annuity_) 
+    {
         return sum_ * rate_;
     }
 
-    if (rate_ == 0.0) {
+    if (rate_ == 0.0) 
+    {
         return sum_ / years_;
     }
 
@@ -55,11 +57,13 @@ void Credit::read(std::istream& in)
     in >> std::ws;
     if (in.peek() == 'C')
     {
-        const auto expect = [&in](const char* text) {
+        const auto expect = [&in](const char* text) 
+        {
             in >> std::ws;
             for (; *text; ++text) {
                 char actual;
-                if (!in.get(actual) || actual != *text) {
+                if (!in.get(actual) || actual != *text) 
+                {
                     in.setstate(std::ios::failbit);
                     return false;
                 }
@@ -76,10 +80,11 @@ void Credit::read(std::istream& in)
             return;
         }
     }
-    else if (!(in >> sum >> rate >> years >> annuity))
-    {
-        return;
-    }
+    else 
+        if (!(in >> sum >> rate >> years >> annuity))
+        {
+            return;
+        }
 
     if (annuity != 0 && annuity != 1) 
     {
