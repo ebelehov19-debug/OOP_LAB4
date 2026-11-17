@@ -12,7 +12,7 @@ private:
 
 public:
     Credit();
-    Credit(double sum, double rate, int years, bool annuity);
+    Credit(double sum, double rate, int years, int annuity);
 
     double metric() const override;
     Bank_Optional* clone() const override;

@@ -14,11 +14,10 @@ Deposit::Deposit()
     : sum_(0.0), rate_(0.0), years_(1), cumulative_(false)
 {}
 
-Deposit::Deposit(double sum, double rate, int years, bool cumulative)
+Deposit::Deposit(double sum, double rate, int years, int cumulative)
     : sum_(sum), rate_(rate), years_(years), cumulative_(cumulative)
 {
-    if (!std::isfinite(sum) || !std::isfinite(rate) ||
-        sum < 0 || rate < 0 || years <= 0) 
+    if (sum < 0 || rate < 0 || years <= 0 || (cumulative != 0 && cumulative != 1))
         {
         throw std::invalid_argument("Invalid deposit parameters");
         }
@@ -45,46 +44,13 @@ void Deposit::read(std::istream& in)
     double rate;
     int years;
     int cumulative;
-    in >> std::ws;
-    if (in.peek() == 'D')
-    {
-        const auto expect = [&in](const char* text) {
-            in >> std::ws;
-            for (; *text; ++text) {
-                char actual;
-                if (!in.get(actual) || actual != *text) {
-                    in.setstate(std::ios::failbit);
-                    return false;
-                }
-            }
-            return true;
-        };
-
-        double printedMetric;
-        if (!expect("Deposit:") || !expect("sum=") || !(in >> sum) ||
-            !expect("rate=") || !(in >> rate) ||
-            !expect("years=") || !(in >> years) ||
-            !expect("cumulative=") || !(in >> cumulative) ||
-            !expect("metric=") || !(in >> printedMetric)) 
-            {
-            return;
-            }
-    }
-    else 
-    if (!(in >> sum >> rate >> years >> cumulative))
-    {
-        return;
-    }
-
-    if (cumulative != 0 && cumulative != 1) 
-    {
-        in.setstate(std::ios::failbit);
+    if (!(in >> sum >> rate >> years >> cumulative)) {
         return;
     }
 
     try 
     {
-        Deposit temp(sum, rate, years, cumulative == 1);
+        Deposit temp(sum, rate, years, cumulative);
         *this = temp;
     }
     catch (const std::invalid_argument&) 

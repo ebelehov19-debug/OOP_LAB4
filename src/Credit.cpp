@@ -13,16 +13,14 @@ Bank_Optional* Credit::clone() const
 Credit::Credit():sum_(0.0),rate_(0.0),years_(1),annuity_(false)
 {}
 
-Credit::Credit(double sum, double rate, int years, bool annuity)
+Credit::Credit(double sum, double rate, int years, int annuity)
     : sum_(sum), rate_(rate), years_(years), annuity_(annuity)
 {
-    if (!std::isfinite(sum) || !std::isfinite(rate) ||
-        sum < 0 || rate < 0 || years <= 0) {
+    if (sum < 0 || rate < 0 || years <= 0 || (annuity != 0 && annuity != 1)) 
+    {
         throw std::invalid_argument("Invalid credit parameters");
     }
 }
-
-
 double Credit::metric() const
 {
     if (!annuity_) 
@@ -54,47 +52,13 @@ void Credit::read(std::istream& in)
     double rate;
     int years;
     int annuity;
-    in >> std::ws;
-    if (in.peek() == 'C')
+    if (!(in >> sum >> rate >> years >> annuity)) 
     {
-        const auto expect = [&in](const char* text) 
-        {
-            in >> std::ws;
-            for (; *text; ++text) {
-                char actual;
-                if (!in.get(actual) || actual != *text) 
-                {
-                    in.setstate(std::ios::failbit);
-                    return false;
-                }
-            }
-            return true;
-        };
-
-        double printedMetric;
-        if (!expect("Credit:") || !expect("sum=") || !(in >> sum) ||
-            !expect("rate=") || !(in >> rate) ||
-            !expect("years=") || !(in >> years) ||
-            !expect("annuity=") || !(in >> annuity) ||
-            !expect("metric=") || !(in >> printedMetric)) {
-            return;
-        }
-    }
-    else 
-        if (!(in >> sum >> rate >> years >> annuity))
-        {
-            return;
-        }
-
-    if (annuity != 0 && annuity != 1) 
-    {
-        in.setstate(std::ios::failbit);
         return;
     }
-
     try 
     {
-        Credit temp(sum, rate, years, annuity == 1);
+        Credit temp(sum, rate, years, annuity);
         *this = temp;
     }
     catch (const std::invalid_argument&) 

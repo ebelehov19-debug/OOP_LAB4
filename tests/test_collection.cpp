@@ -4,15 +4,18 @@
 #include "Deposit.h"
 
 #include <gtest/gtest.h>
-#include <memory>
 #include <stdexcept>
 #include <utility>
 
 void addProduct(BankCollection& collection, Bank_Optional* object)
 {
-    std::unique_ptr<Bank_Optional> product(object);
-    collection.add(product.get());
-    product.release();
+    try {
+        collection.add(object);
+    }
+    catch (...) {
+        delete object;
+        throw;
+    }
 }
 
 BankCollection mixed()

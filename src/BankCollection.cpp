@@ -20,7 +20,6 @@ BankCollection:: BankCollection(const BankCollection& other):data_(nullptr), siz
     if (capacity_ == 0)
         return;
     data_ = new Bank_Optional*[capacity_];
-
     try 
     {
         for (; size_ < other.size_; ++size_) 
@@ -90,7 +89,8 @@ void BankCollection::reserve(std::size_t capacity)
 
 void BankCollection::add(Bank_Optional* object)
 {
-    if (!object) {
+    if (!object) 
+    {
         throw std::invalid_argument("Cannot add nullptr");
     }
     for (std::size_t i = 0; i < size_; ++i) 
@@ -116,7 +116,8 @@ void BankCollection::add(Bank_Optional* object)
 
 void BankCollection::remove(std::size_t index)
 {
-    if (index >= size_) {
+    if (index >= size_) 
+    {
         throw std::out_of_range("Collection index out of range");
     }
     delete data_[index];

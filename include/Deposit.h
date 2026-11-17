@@ -11,7 +11,7 @@ private:
     bool cumulative_;
 public:
     Deposit();
-    Deposit(double sum, double rate, int years, bool cumulative);
+    Deposit(double sum, double rate, int years, int cumulative);
     double metric() const override;
     Bank_Optional* clone() const override;
 

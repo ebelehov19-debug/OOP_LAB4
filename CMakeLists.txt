@@ -48,7 +48,13 @@ if(BUILD_TESTING)
         )
         FetchContent_MakeAvailable(googletest)
     endif()
-    add_executable(bank_tests tests/test_bank.cpp tests/test_collection.cpp)
+    add_executable(bank_tests
+        tests/test_bank_optional.cpp
+        tests/test_deposit.cpp
+        tests/test_credit.cpp
+        tests/test_card.cpp
+        tests/test_collection.cpp
+    )
     target_link_libraries(bank_tests PRIVATE bank GTest::gtest_main)
     enable_warnings(bank_tests)
     include(GoogleTest)
