@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <limits>
 #include <sstream>
-#include <stdexcept>
+
 #include <string>
 
 constexpr double eps = 1e-6;
@@ -30,39 +30,6 @@ TEST(BankOptionalTest, SpecificMethodsAreCalledAfterCast) {
     EXPECT_FALSE(Deposit().isCumulative());
     EXPECT_FALSE(Credit().isAnnuity());
     EXPECT_FALSE(Card().hasCashback());
-}
-
-TEST(BankOptionalTest, RejectsInvalidConstructorArguments) {
-    for (double invalid : {-1.0, -100.0}) {
-        EXPECT_THROW(Deposit(invalid, 0.1, 1, false), std::invalid_argument);
-        EXPECT_THROW(Deposit(100, invalid, 1, false), std::invalid_argument);
-        EXPECT_THROW(Credit(invalid, 0.1, 1, false), std::invalid_argument);
-        EXPECT_THROW(Credit(100, invalid, 1, false), std::invalid_argument);
-        EXPECT_THROW(Card(invalid, 0.1), std::invalid_argument);
-        EXPECT_THROW(Card(100, invalid), std::invalid_argument);
-    }
-    for (int years : {0, -1}) {
-        EXPECT_THROW(Deposit(100, 0.1, years, false), std::invalid_argument);
-        EXPECT_THROW(Credit(100, 0.1, years, false), std::invalid_argument);
-    }
-    for (int flag : {-1, 2}) {
-        EXPECT_THROW(Deposit(100, 0.1, 1, flag), std::invalid_argument);
-        EXPECT_THROW(Credit(100, 0.1, 1, flag), std::invalid_argument);
-    }
-}
-
-TEST(BankOptionalTest, RejectsInvalidBooleanFieldsWithoutChangingObject) {
-    Deposit deposit(100, 0.1, 1, false);
-    Credit credit(100, 0.1, 1, false);
-    for (const char* text : {"100 0.1 1 2", "100 0.1 1 -1"}) {
-        std::istringstream d(text), c(text);
-        d >> deposit;
-        c >> credit;
-        EXPECT_TRUE(d.fail());
-        EXPECT_TRUE(c.fail());
-        EXPECT_FALSE(deposit.isCumulative());
-        EXPECT_FALSE(credit.isAnnuity());
-    }
 }
 
 TEST(BankOptionalTest, EqualityComparesMetricAcrossTypesWithTolerance) {

@@ -33,6 +33,10 @@ if(ENABLE_SANITIZERS)
     endif()
 endif()
 
+add_executable(bank_demo src/main.cpp)
+target_link_libraries(bank_demo PRIVATE bank)
+enable_warnings(bank_demo)
+
 include(CTest)
 if(BUILD_TESTING)
     find_package(GTest QUIET)

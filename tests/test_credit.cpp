@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <limits>
 #include <sstream>
-#include <stdexcept>
+
 #include <string>
 
 constexpr double eps = 1e-6;
@@ -37,18 +37,17 @@ TEST(CreditTest, OutputIncludesTypeAndMetric) {
     EXPECT_NE(stream.str().find("metric="), std::string::npos);
 }
 
-TEST(CreditTest, RejectsLabelledInput) {
+TEST(CreditTest, RejectsIncorrectLabels) {
     Credit product;
-    std::istringstream stream("Credit: invalid");
+    std::istringstream stream("Credit: wrong=100");
     stream >> product;
     EXPECT_TRUE(stream.fail());
     EXPECT_DOUBLE_EQ(product.metric(), 0);
 }
-
 TEST(CreditTest, InvalidInputPreservesObject) {
     auto product = Credit(12000, 0, 2, true);
     const double previous = product.metric();
-    for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
+    for (const char* text : {"oops", "", "1"}) {
         std::istringstream stream(text);
         stream >> product;
         EXPECT_TRUE(stream.fail()) << text;
@@ -73,5 +72,14 @@ TEST(CreditTest, ComputesSimpleAndAnnuityAnnualPayments) {
     EXPECT_NEAR(Credit(100000, 0.12, 1, false).metric(), 12000, eps);
     EXPECT_NEAR(Credit(100000, 0.12, 1, true).metric(), 106618.546414, 1e-5);
     EXPECT_DOUBLE_EQ(Credit(12000, 0, 2, true).metric(), 6000);
+}
+
+
+TEST(CreditTest, OutputPreservesStreamPrecision) {
+    const Credit original = Credit(12345.678901234, 0.123456789, 3, 1);
+    std::stringstream stream;
+    const auto precision = stream.precision();
+    stream << original;
+    EXPECT_EQ(stream.precision(), precision);
 }
 

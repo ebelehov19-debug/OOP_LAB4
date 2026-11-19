@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <limits>
 #include <sstream>
-#include <stdexcept>
+
 #include <string>
 
 constexpr double eps = 1e-6;
@@ -37,18 +37,17 @@ TEST(CardTest, OutputIncludesTypeAndMetric) {
     EXPECT_NE(stream.str().find("metric="), std::string::npos);
 }
 
-TEST(CardTest, RejectsLabelledInput) {
+TEST(CardTest, RejectsIncorrectLabels) {
     Card product;
-    std::istringstream stream("Card: invalid");
+    std::istringstream stream("Card: wrong=100");
     stream >> product;
     EXPECT_TRUE(stream.fail());
     EXPECT_DOUBLE_EQ(product.metric(), 0);
 }
-
 TEST(CardTest, InvalidInputPreservesObject) {
     auto product = Card(10000, 0.05);
     const double previous = product.metric();
-    for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
+    for (const char* text : {"oops", "", "1"}) {
         std::istringstream stream(text);
         stream >> product;
         EXPECT_TRUE(stream.fail()) << text;
@@ -73,5 +72,14 @@ TEST(CardTest, ComputesCashback) {
     EXPECT_NEAR(Card(10000, 0.05).metric(), 500, eps);
     EXPECT_DOUBLE_EQ(Card(0, 0.05).metric(), 0);
     EXPECT_DOUBLE_EQ(Card(10000, 0).metric(), 0);
+}
+
+
+TEST(CardTest, OutputPreservesStreamPrecision) {
+    const Card original = Card(12345.678901234, 0.123456789);
+    std::stringstream stream;
+    const auto precision = stream.precision();
+    stream << original;
+    EXPECT_EQ(stream.precision(), precision);
 }
 

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <istream>
 #include <ostream>
-#include <stdexcept>
+
 
 Bank_Optional* Card::clone() const
 {
@@ -13,12 +13,9 @@ Bank_Optional* Card::clone() const
 Card::Card():spending_(0.0),rate_(0.0){}
 
 Card:: Card(double spending,double rate):
-    spending_(spending),rate_(rate)
+spending_(spending),rate_(rate)
 {
-        if (spending < 0 || rate < 0)
-        {
-             throw std::invalid_argument("Invalid card parameters");
-        }
+
 }
 
 double Card::metric() const
@@ -35,24 +32,21 @@ void Card::read(std::istream& in)
 {
     double spending;
     double rate;
-    if (!(in >> spending >> rate)) {
+    if (!(in >> spending >> rate)) 
+    {
         return;
     }
-
-    try
-     {
+    
         Card temp(spending, rate);
         *this = temp;
-    }
-    catch (const std::invalid_argument&) 
-    {
-        in.setstate(std::ios::failbit);
-    }
+    
 }
 
 void Card::print(std::ostream& out) const
 {
+    const auto previousPrecision = out.precision(6);
     out << "Card: spending=" << spending_
         << " rate=" << rate_
         << " metric=" << metric();
+    out.precision(previousPrecision);
 }

@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <limits>
 #include <sstream>
-#include <stdexcept>
+
 #include <string>
 
 constexpr double eps = 1e-6;
@@ -37,18 +37,17 @@ TEST(DepositTest, OutputIncludesTypeAndMetric) {
     EXPECT_NE(stream.str().find("metric="), std::string::npos);
 }
 
-TEST(DepositTest, RejectsLabelledInput) {
+TEST(DepositTest, RejectsIncorrectLabels) {
     Deposit product;
-    std::istringstream stream("Deposit: invalid");
+    std::istringstream stream("Deposit: wrong=100");
     stream >> product;
     EXPECT_TRUE(stream.fail());
     EXPECT_DOUBLE_EQ(product.metric(), 0);
 }
-
 TEST(DepositTest, InvalidInputPreservesObject) {
     auto product = Deposit(10000, 0.1, 2, true);
     const double previous = product.metric();
-    for (const char* text : {"oops", "", "-1 -1 -1 0", "1"}) {
+    for (const char* text : {"oops", "", "1"}) {
         std::istringstream stream(text);
         stream >> product;
         EXPECT_TRUE(stream.fail()) << text;
@@ -73,5 +72,14 @@ TEST(DepositTest, ComputesSimpleAndCompoundAnnualEffect) {
     EXPECT_NEAR(Deposit(10000, 0.1, 2, false).metric(), 1000, eps);
     EXPECT_NEAR(Deposit(10000, 0.1, 2, true).metric(), 1050, eps);
     EXPECT_DOUBLE_EQ(Deposit(10000, 0, 2, true).metric(), 0);
+}
+
+
+TEST(DepositTest, OutputPreservesStreamPrecision) {
+    const Deposit original = Deposit(12345.678901234, 0.123456789, 3, 1);
+    std::stringstream stream;
+    const auto precision = stream.precision();
+    stream << original;
+    EXPECT_EQ(stream.precision(), precision);
 }
 

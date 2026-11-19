@@ -3,7 +3,7 @@
 #include <cmath>
 #include <istream>
 #include <ostream>
-#include <stdexcept>
+
 
 Bank_Optional* Credit::clone() const
 {
@@ -14,12 +14,9 @@ Credit::Credit():sum_(0.0),rate_(0.0),years_(1),annuity_(false)
 {}
 
 Credit::Credit(double sum, double rate, int years, int annuity)
-    : sum_(sum), rate_(rate), years_(years), annuity_(annuity)
+: sum_(sum), rate_(rate), years_(years), annuity_(annuity)
 {
-    if (sum < 0 || rate < 0 || years <= 0 || (annuity != 0 && annuity != 1)) 
-    {
-        throw std::invalid_argument("Invalid credit parameters");
-    }
+
 }
 double Credit::metric() const
 {
@@ -56,24 +53,21 @@ void Credit::read(std::istream& in)
     {
         return;
     }
-    try 
-    {
+    
         Credit temp(sum, rate, years, annuity);
         *this = temp;
-    }
-    catch (const std::invalid_argument&) 
-    {
-        in.setstate(std::ios::failbit);
-    }
+    
 }
 
 void Credit::print(std::ostream& out) const
 {
+    const auto previousPrecision = out.precision(6);
     out << "Credit: sum=" << sum_
         << " rate=" << rate_
         << " years=" << years_
         << " annuity=" << (annuity_ ? 1 : 0)
         << " metric=" << metric();
+    out.precision(previousPrecision);
 }
 
 
